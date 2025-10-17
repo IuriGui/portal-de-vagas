@@ -1,0 +1,4 @@
+site_name: Portal De Vagas
+nav:
+  - Home: index.md
+  - Getting Started: deploy.md

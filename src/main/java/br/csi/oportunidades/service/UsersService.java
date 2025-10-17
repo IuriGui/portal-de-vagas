@@ -1,0 +1,51 @@
+package br.csi.oportunidades.service;
+
+
+import br.csi.oportunidades.dto.usuario.UsersDTO;
+import br.csi.oportunidades.model.Users;
+import br.csi.oportunidades.repository.UsersRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@AllArgsConstructor
+public class UsersService {
+
+    private final UsersRepository usersRepository;
+
+    public Users save(Users user) {
+        return usersRepository.save(user);
+    }
+
+    public void update(Users user, UUID id) {
+        Optional<Users> optionalUser = usersRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            usersRepository.save(user);
+        } else {
+            throw new RuntimeException("Usuario não encontrado.");
+        }
+
+    }
+
+    public ResponseEntity delete(UUID id) {
+        Optional<Users> optionalUser = usersRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            usersRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    public List<UsersDTO> findAll() {
+        return usersRepository.findAll().stream()
+                .map(u -> new UsersDTO(u.getId(), u.getEmail()))
+                .collect(Collectors.toList());
+    }
+
+}
