@@ -48,4 +48,10 @@ public class UsersService {
                 .collect(Collectors.toList());
     }
 
+
+    public UsersDTO findById(UUID id) {
+        Optional<Users> optionalUser = usersRepository.findById(id);
+        return optionalUser.map(users -> new UsersDTO(users.getId(), users.getEmail())).orElse(null);
+    }
+
 }

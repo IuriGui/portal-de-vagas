@@ -37,4 +37,11 @@ public class InstituicaoService {
                 .toList();
     }
 
+    public void deleteInstituicao(Long id) {
+        if (!instituicaoRepository.existsById(id)) {
+            throw new NoSuchElementException("Instituição não encontrada");
+        }
+        instituicaoRepository.deleteById(id);
+    }
+
 }

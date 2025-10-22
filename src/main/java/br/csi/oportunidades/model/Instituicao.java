@@ -31,7 +31,7 @@ public class Instituicao {
     private Endereco endereco;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Users usuario;
 
