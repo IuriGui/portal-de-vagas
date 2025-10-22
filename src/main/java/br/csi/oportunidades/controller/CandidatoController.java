@@ -12,27 +12,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/candidato")
 public class CandidatoController {
 
-
-    public void subscribe(){
-
-    }
-
-    public void unsubscribe(){
-
-    }
-
-    public void createcurriculum(){
-
-    }
-
-    public void editSkills(){
-
-    }
-
-    public void editWorkExperience(){
-    }
-
-
-
-
 }
