@@ -1,4 +1,4 @@
-package br.csi.oportunidades.service;
+package br.csi.oportunidades.service.candidato;
 
 import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.candidato.ExperienciaProfissional;
@@ -8,9 +8,13 @@ import br.csi.oportunidades.repository.ExperienciaProfissionalRepository;
 import br.csi.oportunidades.repository.FormacaoAcademicaRepository;
 import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 
@@ -19,7 +23,7 @@ import java.util.UUID;
 public class CandidatoService {
 
     private final CandidatoRepository candidatoRepository;
-    private final ExperienciaProfissionalRepository experienciaProfissional;
+
     private final FormacaoAcademicaRepository formacaoAcademica;
     private final UsuarioAutenticado usuarioAutenticado;
 
@@ -30,27 +34,6 @@ public class CandidatoService {
     public Candidato findByIdUsuario(UUID idUsuario) {
         return candidatoRepository.findByUsuarioId(idUsuario);
     }
-
-    public ExperienciaProfissional addExperienciaProfissional(ExperienciaProfissional ep) {
-
-        ep.setCandidato(candidatoRepository.findByUsuarioId(usuarioAutenticado.getUserId()));
-
-        return experienciaProfissional.save(ep);
-    }
-
-    public List<ExperienciaProfissional> getExperienciasProfissionais(Long idUCandidato) {
-        return experienciaProfissional.findByCandidatoId(idUCandidato);
-    }
-
-    public FormacaoAcademica addFormacaoAcademica(FormacaoAcademica fa) {
-        fa.setCandidato(candidatoRepository.findByUsuarioId(usuarioAutenticado.getUserId()));
-        return formacaoAcademica.save(fa);
-    }
-
-    public List<FormacaoAcademica> getFormacoesAcademicas(Long idUCandidato) {
-        return formacaoAcademica.findByCandidatoId(idUCandidato);
-    }
-
 
 
 

@@ -7,7 +7,7 @@ import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.Instituicao;
 import br.csi.oportunidades.model.TipoConta;
 import br.csi.oportunidades.model.Users;
-import br.csi.oportunidades.service.CandidatoService;
+import br.csi.oportunidades.service.candidato.CandidatoService;
 import br.csi.oportunidades.service.InstituicaoService;
 import br.csi.oportunidades.service.UsersService;
 import jakarta.transaction.Transactional;

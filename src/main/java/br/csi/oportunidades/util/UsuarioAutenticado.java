@@ -18,6 +18,7 @@ public class UsuarioAutenticado {
     @Autowired
     private TokenServiceJWT tokenServiceJWT;
 
+
     public UUID getUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -40,7 +41,9 @@ public class UsuarioAutenticado {
     }
 
 
-
+    public boolean isUsuarioLogado(UUID userId) {
+        return getUserId().equals(userId);
+    }
 
 
 }
