@@ -1,6 +1,7 @@
 package br.csi.oportunidades.model.candidato;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,7 @@ public class Habilidade {
     private String nome;
 
     @ManyToMany(mappedBy = "habilidades")
+    @JsonIgnore
     private Set<Candidato> candidatos = new HashSet<>();
 
 

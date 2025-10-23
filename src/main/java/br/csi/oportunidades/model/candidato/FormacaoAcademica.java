@@ -1,5 +1,6 @@
 package br.csi.oportunidades.model.candidato;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class FormacaoAcademica {
 
     @ManyToOne
     @JoinColumn(name = "candidato_id")
+    @JsonIgnore
     private Candidato candidato;
 
     private String instituicao;
