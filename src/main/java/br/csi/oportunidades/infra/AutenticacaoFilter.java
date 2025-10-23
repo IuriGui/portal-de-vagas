@@ -32,8 +32,8 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
         System.out.println("Filtro Autenciacao e autorizacao");
 
-        String token = request.getHeader("Authorization");
-        System.out.println("Token: "+token);
+        String token = recuperarToken(request);
+        System.out.println("Token: " + token);
 
         if(token != null){
             String subject = this.tokenService.getSubject(token);
@@ -41,7 +41,7 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = this.autenticacaoService.loadUserByUsername(subject);
             UsernamePasswordAuthenticationToken autorizacao =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(autorizacao);
 

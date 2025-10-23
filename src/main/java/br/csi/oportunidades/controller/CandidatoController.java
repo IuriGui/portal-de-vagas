@@ -1,14 +1,17 @@
 package br.csi.oportunidades.controller;
 
 
+import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.candidato.ExperienciaProfissional;
 import br.csi.oportunidades.repository.CandidatoRepository;
 import br.csi.oportunidades.service.CandidatoService;
+import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -17,9 +20,18 @@ public class CandidatoController {
 
     private final CandidatoService candidatoService;
 
-    @PostMapping()
-    public ExperienciaProfissional addExperienciaProfissional(@RequestBody ExperienciaProfissional ex) {
-        return candidatoService.addExperienciaProfissional(ex);
+
+//    @GetMapping("/experiencia")
+//    public Candidato getExperiencia() {
+//        UUID userId = usuarioAutenticado.getUserId();
+//        return candidatoService.findByIdUsuario(userId);
+//    }
+
+    @PostMapping("/experiencia")
+    public ResponseEntity<ExperienciaProfissional> createExperiencia(@RequestBody ExperienciaProfissional ex) {
+        ExperienciaProfissional experiencia = candidatoService.addExperienciaProfissional(ex);
+        return ResponseEntity.status(HttpStatus.CREATED).body(experiencia);
+        //Não retorna o location pq aqui não faz sentido acessar apenas uma experiencia. Voce SEMPRE vai querer todas, dps se quiser uma individualment faz a mágica no front
     }
 
 

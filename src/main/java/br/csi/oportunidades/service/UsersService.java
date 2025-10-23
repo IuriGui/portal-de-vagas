@@ -56,4 +56,8 @@ public class UsersService {
         return optionalUser.map(users -> new UsersDTO(users.getId(), users.getEmail())).orElse(null);
     }
 
+    public UUID getIdByEmail(String email) {
+        return usersRepository.findByEmail(email).getId();
+    }
+
 }
