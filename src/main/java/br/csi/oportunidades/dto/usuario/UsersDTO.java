@@ -1,6 +1,5 @@
 package br.csi.oportunidades.dto.usuario;
 
-import br.csi.oportunidades.model.Candidato;
 import lombok.*;
 
 import java.util.UUID;

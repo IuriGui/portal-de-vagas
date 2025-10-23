@@ -29,4 +29,6 @@ public class Users {
     @Column(name = "tipo_conta", nullable = false)
     private TipoConta tipoConta = TipoConta.CANDIDATO;
 
+
+
 }

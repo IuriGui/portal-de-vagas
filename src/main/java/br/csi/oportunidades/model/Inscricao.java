@@ -19,8 +19,6 @@ public class Inscricao {
     private Long candidato_id;
     private Long oportunidade_id;
 
-
-
     private Date data_inscricao;
     private String status;
 

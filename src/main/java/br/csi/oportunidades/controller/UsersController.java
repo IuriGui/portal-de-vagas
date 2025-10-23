@@ -3,7 +3,7 @@ package br.csi.oportunidades.controller;
 
 import br.csi.oportunidades.dto.usuario.UserCreateRequest;
 import br.csi.oportunidades.dto.usuario.UsersDTO;
-import br.csi.oportunidades.model.Candidato;
+import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.Instituicao;
 import br.csi.oportunidades.model.TipoConta;
 import br.csi.oportunidades.model.Users;
@@ -20,7 +20,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor

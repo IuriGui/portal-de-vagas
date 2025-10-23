@@ -6,6 +6,7 @@ import br.csi.oportunidades.model.Users;
 import br.csi.oportunidades.repository.UsersRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class UsersService {
     private final UsersRepository usersRepository;
 
     public Users save(Users user) {
+        user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
         return usersRepository.save(user);
     }
 
