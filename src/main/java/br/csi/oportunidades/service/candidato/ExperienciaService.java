@@ -50,11 +50,14 @@ public class ExperienciaService {
         ExperienciaProfissional exExistente = experienciaProfissionalRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Experiencia não encontrada"));
 
+
+        exExistente.setCandidato(c);
         exExistente.setCargo(nova.getCargo());
         exExistente.setEmpresa(nova.getEmpresa());
         exExistente.setDataInicio(nova.getDataInicio());
         exExistente.setDataFim(nova.getDataFim());
-        return ResponseEntity.ok(exExistente);
+
+        return ResponseEntity.ok(experienciaProfissionalRepository.save(exExistente));
 
     }
 

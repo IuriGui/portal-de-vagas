@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/candidato")
 public class ExperienciaController {
 
     private final ExperienciaService experienciaService;
@@ -26,7 +25,7 @@ public class ExperienciaController {
         //Não retorna o location pq aqui não faz sentido acessar apenas uma experiencia. Voce SEMPRE vai querer todas, dps se quiser uma individualment faz a mágica no front
     }
 
-    @GetMapping("/{id}/experiencia")
+    @GetMapping("candidato/{id}/experiencia")
     public List<ExperienciaProfissional> getExperiencias(@PathVariable Long id) {
         return experienciaService.getExperienciasProfissionais(id);
     }

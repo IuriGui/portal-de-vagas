@@ -39,10 +39,7 @@ public class FormacaoController {
 
     @PutMapping("/me/formacao/{id}")
     public ResponseEntity<FormacaoAcademica> updateFormacaoAcademica(@PathVariable Long id, @RequestBody FormacaoAcademica fa) throws AccessDeniedException {
-
-
         FormacaoAcademica f = formacaoService.updateFormacaoAcademica(fa, id);
-
         return ResponseEntity.ok().body(f);
     }
 

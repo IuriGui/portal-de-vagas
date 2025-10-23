@@ -65,12 +65,23 @@ public class OportunidadeService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
+    public Oportunidade findById(Long id) {
+        return oportunidadeRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Oportunidade não encontrada com id: " + id));
+    }
+
+
     public void deleteOportunidade(Long id) {
         if (!oportunidadeRepository.existsById(id)) {
             throw new NoSuchElementException("Oportunidade não encontrada");
         }
         oportunidadeRepository.deleteById(id);
     }
+
+    public boolean isOportunidadeOpen(Oportunidade op) {
+        return op.getDataValidade().getTime() > System.currentTimeMillis();
+    }
+
 
 
 
