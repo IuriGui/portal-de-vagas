@@ -39,19 +39,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/oportunidade/*/retirar").hasRole("CANDIDATO")
 
                         .requestMatchers(HttpMethod.GET, "/oportunidade/*").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(this.autenticacaoFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(401);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Token inválido ou expirado\", \"status\": 401}");
-                        })
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(403);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Acesso negado\", \"status\": 403}");
-                        }))
                 .build();
     }
 

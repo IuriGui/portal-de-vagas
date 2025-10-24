@@ -16,10 +16,10 @@ public class CandidatoController {
 
 
 
-    @PostMapping("/me/inscrever/{id}")
-    public ResponseEntity<Inscricao> inscrever(@PathVariable Long id) {
-        return candidatoService.inscreverEmOportunidade(id);
-    }
+//    @PostMapping("/me/inscrever/{id}")
+//    public ResponseEntity<Inscricao> inscrever(@PathVariable Long id) {
+//        return candidatoService.inscreverEmOportunidade(id);
+//    }
 
 
 }

@@ -1,14 +1,20 @@
 package br.csi.oportunidades.infra;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
@@ -16,8 +22,8 @@ public class ErrorHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> tratarErro404(){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("{\"error\": \"Recurso não encontrado\", \"status\": 404}");
+
+        return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -25,39 +31,43 @@ public class ErrorHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String> tratarErro401() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("{\"error\": \"Email ou senha incorretos\", \"status\": 401}");
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<String> tratarUsuarioNaoEncontrado() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("{\"error\": \"Usuário não encontrado\", \"status\": 401}");
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> tratarErroValidacao() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("{\"error\": \"Dados de entrada inválidos\", \"status\": 400}");
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, Object> errors = new HashMap<>();
+        errors.put("error", "Erro de Validação");
+
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST); // Retorna 400
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> tratarErroArgumento() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("{\"error\": \"Argumento inválido\", \"status\": 400}");
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthorizationDenied(AuthorizationDeniedException ex) {
+
+        Map<String, Object> errors = new HashMap<>();
+        errors.put("timestamp", new Date());
+        errors.put("status", HttpStatus.FORBIDDEN.value());
+        errors.put("error", "Acesso negado");
+        errors.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errors);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> tratarErroRuntime(RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\": \"Erro interno do servidor: " + e.getMessage() + "\", \"status\": 500}");
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        Map<String, Object> errors = new HashMap<>();
+        errors.put("erro", ex.getMessage());
+        errors.put("timestamp", new Date());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errors);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> tratarErroGenerico(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\": \"Erro interno do servidor\", \"status\": 500}");
-    }
+
+
+
+
+
+
+
 }

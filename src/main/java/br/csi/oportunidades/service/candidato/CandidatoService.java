@@ -1,16 +1,18 @@
 package br.csi.oportunidades.service.candidato;
 
+import br.csi.oportunidades.dto.inscricao.InscricaoResponseDTO;
 import br.csi.oportunidades.model.inscricao.Inscricao;
 import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.inscricao.StatusInscricao;
 import br.csi.oportunidades.model.oportunidade.Oportunidade;
 import br.csi.oportunidades.repository.CandidatoRepository;
 import br.csi.oportunidades.service.InscricaoService;
+import br.csi.oportunidades.service.OportunidadeService;
 import br.csi.oportunidades.util.UsuarioAutenticado;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.hibernate.grammars.hql.HqlParser;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
@@ -26,6 +28,7 @@ public class CandidatoService {
     private final CandidatoRepository candidatoRepository;
     private final InscricaoService inscricaoService;
     private final UsuarioAutenticado usuarioAutenticado;
+    private final OportunidadeService oportunidadeService;
 
     public Candidato create(Candidato candidato) {
         return candidatoRepository.save(candidato);
@@ -49,33 +52,39 @@ public class CandidatoService {
 
 
     @Transactional
-    public ResponseEntity<Inscricao> inscreverEmOportunidade(Long id) {
+    public InscricaoResponseDTO inscreverEmOportunidade(Long id) {
 
         Inscricao inscricao = new Inscricao();
         Long candidatoId = UsuarioAutenticado.getUserId();
-        
-        if (candidatoId == null) {
-            throw new NoSuchElementException("Usuário não autenticado ou ID não encontrado.");
-        }
-        
         Candidato c = findById(candidatoId);
-        System.out.println("Candidato encontrado: " + (c != null ? c.getId() : "null"));
 
-        Oportunidade o = new Oportunidade();
-        o.setId(id);
+        Oportunidade o = oportunidadeService.findById(id);
         
         if (c == null) {
             throw new NoSuchElementException("Candidato não encontrado para o usuário autenticado.");
         }
 
+        if(o == null) {
+            throw new NoSuchElementException("Oportuniadde não encontrada.");
+        }
 
         inscricao.setCandidato(c);
         inscricao.setData_inscricao(new java.sql.Timestamp(System.currentTimeMillis()));
         inscricao.setOportunidade(o);
 
-        Inscricao salva = inscricaoService.createInscricao(inscricao);
+        System.out.println(inscricao.getOportunidade().getId() + "----" + inscricao.getCandidato().getId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(salva);
+        Inscricao a = inscricaoService.findByOportunidadeIdAndCandidatoId(inscricao.getOportunidade().getId(), inscricao.getCandidato().getId());
+
+        if(a != null) {
+            throw new DataIntegrityViolationException("Usuario já se candidatou a essa vaga");
+        }
+
+        inscricao.setStatus(StatusInscricao.INSCRICAO_RECEBIDA);
+
+        inscricao = inscricaoService.save(inscricao);
+
+        return InscricaoResponseDTO.fromEntity(inscricao, inscricao.getCandidato().getNome(), o.getTitulo());
     }
 
     public void desinscreverEmOportunidade(Long idOportunidade) throws AccessDeniedException {
@@ -86,7 +95,7 @@ public class CandidatoService {
                 i.setStatus(StatusInscricao.CANCELADA);
                 inscricaoService.save(i);
             } else {
-                throw new AccessDeniedException("Acesso ao recurso negado");
+                throw new NoSuchElementException("Inscrição não existe");
             }
         }
 

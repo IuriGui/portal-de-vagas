@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class OportunidadeEmpresaController {
     @ApiResponse(responseCode = "400", description = "Dados de requisição inválidos.")
     @ApiResponse(responseCode = "403", description = "Acesso negado (Usuário não é EMPRESA).")
     @PostMapping
-    public ResponseEntity<OportunidadeResponseDTO> criarOportunidade(@RequestBody OportunidadeRequestDTO dto, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<OportunidadeResponseDTO> criarOportunidade(@RequestBody @Valid OportunidadeRequestDTO dto, UriComponentsBuilder uriBuilder){
         OportunidadeResponseDTO entity = oportunidadeService.createOportunidade(dto);
         URI location = uriBuilder.path("/oportunidade/{id}").buildAndExpand(entity.oportunidade_id()).toUri();
         return ResponseEntity.created(location).body(entity);

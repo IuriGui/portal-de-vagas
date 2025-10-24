@@ -1,7 +1,6 @@
 package br.csi.oportunidades.model.oportunidade;
 
 
-import br.csi.oportunidades.dto.inscricao.InscricaoResponseDTO;
 import br.csi.oportunidades.model.Endereco;
 import br.csi.oportunidades.model.Instituicao;
 import br.csi.oportunidades.model.inscricao.Inscricao;

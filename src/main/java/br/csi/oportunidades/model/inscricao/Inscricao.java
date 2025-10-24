@@ -2,6 +2,7 @@ package br.csi.oportunidades.model.inscricao;
 
 import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.oportunidade.Oportunidade;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,10 +22,12 @@ public class Inscricao {
 
     @ManyToOne
     @JoinColumn(name = "candidato_id")
+    @JsonIgnore
     private Candidato candidato;
 
     @ManyToOne
     @JoinColumn(name = "oportunidade_id")
+    @JsonIgnore
     private Oportunidade oportunidade;
 
     private Date data_inscricao;

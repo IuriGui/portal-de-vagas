@@ -4,11 +4,12 @@ package br.csi.oportunidades.controller.oportunidade;
 import br.csi.oportunidades.dto.inscricao.InscricaoResponseDTO;
 import br.csi.oportunidades.model.inscricao.Inscricao;
 import br.csi.oportunidades.service.candidato.CandidatoService;
-import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.nio.file.AccessDeniedException;
 
 @RestController
@@ -20,8 +21,13 @@ public class OportunidadeCandidatoController {
 
 
     @PostMapping("/{id}/candidatar")
-    public ResponseEntity<Inscricao> inscricaoResponseDTO(@PathVariable Long id){
-        return candidatoService.inscreverEmOportunidade(id);
+    public ResponseEntity<InscricaoResponseDTO> inscricaoResponseDTO(@PathVariable Long id, UriComponentsBuilder uriBuilder){
+
+
+        InscricaoResponseDTO i = candidatoService.inscreverEmOportunidade(id);
+
+        URI location = uriBuilder.path("/oportunidade/{id}").buildAndExpand(i.getId()).toUri();
+        return ResponseEntity.created(location).body(i);
     }
 
     @DeleteMapping("/{idOportunidade}/retirar")
