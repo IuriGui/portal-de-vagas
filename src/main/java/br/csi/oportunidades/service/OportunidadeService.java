@@ -8,12 +8,14 @@ import br.csi.oportunidades.model.oportunidade.AreaAtuacao;
 import br.csi.oportunidades.model.oportunidade.Oportunidade;
 import br.csi.oportunidades.repository.AreaAtuacaoRepository;
 import br.csi.oportunidades.repository.OportunidadeRepository;
+import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -31,10 +33,18 @@ public class OportunidadeService {
         return op;
     }
 
+    public List<OportunidadeResponseDTO> getOportunidadesLogado(){
+        List<OportunidadeResponseDTO> op = new java.util.ArrayList<>(List.of());
+        for(Oportunidade o : this.oportunidadeRepository.findByInstituicaoId(UsuarioAutenticado.getUserId())){
+            op.add(OportunidadeResponseDTO.from(o));
+        }
+        return op;
+    }
+
     public OportunidadeResponseDTO createOportunidade(OportunidadeRequestDTO dto){
         Oportunidade op = new Oportunidade();
 
-        Optional<Instituicao> i = instituicaoService.findById(dto.instituicao_id());
+        Optional<Instituicao> i = instituicaoService.findById(UsuarioAutenticado.getUserId());
         Optional<AreaAtuacao> a = areaAtuacaoRepository.findById(dto.areaAtuacao_id());
 
         if(i.isPresent() && a.isPresent()){
@@ -53,8 +63,6 @@ public class OportunidadeService {
 
         }
 
-
-
         return null;
 
     }
@@ -69,7 +77,6 @@ public class OportunidadeService {
         return oportunidadeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Oportunidade não encontrada com id: " + id));
     }
-
 
     public void deleteOportunidade(Long id) {
         if (!oportunidadeRepository.existsById(id)) {

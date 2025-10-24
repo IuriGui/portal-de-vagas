@@ -2,6 +2,7 @@ package br.csi.oportunidades.model.candidato;
 
 import br.csi.oportunidades.model.Endereco;
 import br.csi.oportunidades.model.Users;
+import br.csi.oportunidades.model.inscricao.Inscricao;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +49,8 @@ public class Candidato {
     )
     private Set<Habilidade> habilidades = new HashSet<>();
 
+    @OneToMany(mappedBy = "candidato", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Inscricao> inscricoes;
 
 
 }

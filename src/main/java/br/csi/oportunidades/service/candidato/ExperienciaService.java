@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -21,11 +22,11 @@ public class ExperienciaService {
 
     private final ExperienciaProfissionalRepository experienciaProfissionalRepository;
     private final CandidatoService candidatoService;
-    private final UsuarioAutenticado usuarioAutenticado;
+
 
     public ExperienciaProfissional addExperienciaProfissional(ExperienciaProfissional ep) {
 
-        Candidato c = candidatoService.findByIdUsuario(usuarioAutenticado.getUserId());
+        Candidato c = candidatoService.findById(UsuarioAutenticado.getUserId());
         ep.setCandidato(c);
 
         return experienciaProfissionalRepository.save(ep);
@@ -34,22 +35,23 @@ public class ExperienciaService {
     public List<ExperienciaProfissional> getExperienciasProfissionais(Long idUCandidato) {
 
         if(idUCandidato == null) {
-            Candidato c = candidatoService.findByIdUsuario(usuarioAutenticado.getUserId());
-            return experienciaProfissionalRepository.findByCandidatoId(c.getId());
+            return experienciaProfissionalRepository.findByCandidatoId(UsuarioAutenticado.getUserId());
         }
         return experienciaProfissionalRepository.findByCandidatoId(idUCandidato);
     }
 
     public ResponseEntity<?> updateExperienciaProfissional(ExperienciaProfissional nova, Long id) throws AccessDeniedException {
 
-        Candidato c = candidatoService.findByIdUsuario(usuarioAutenticado.getUserId());
-        if(!usuarioAutenticado.isUsuarioLogado(c.getUsuario().getId())){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        Long tipo_id = UsuarioAutenticado.getUserId();
+
+        Candidato c = candidatoService.findById(tipo_id);
 
         ExperienciaProfissional exExistente = experienciaProfissionalRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Experiencia não encontrada"));
 
+        if (!Objects.equals(exExistente.getCandidato().getId(), tipo_id)) {
+            throw new AccessDeniedException("Você só pode alterar suas próprias experiências profissionais.");
+        }
 
         exExistente.setCandidato(c);
         exExistente.setCargo(nova.getCargo());

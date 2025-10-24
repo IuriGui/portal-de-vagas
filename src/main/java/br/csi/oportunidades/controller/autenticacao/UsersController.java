@@ -1,4 +1,4 @@
-package br.csi.oportunidades.controller;
+package br.csi.oportunidades.controller.autenticacao;
 
 
 import br.csi.oportunidades.dto.usuario.UserCreateRequest;

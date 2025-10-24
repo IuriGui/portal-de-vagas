@@ -1,10 +1,13 @@
 package br.csi.oportunidades.dto.oportunidade;
 
+import br.csi.oportunidades.dto.inscricao.InscricaoResponseDTO;
 import br.csi.oportunidades.model.Endereco;
 import br.csi.oportunidades.model.oportunidade.Oportunidade;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record OportunidadeResponseDTO(
         Long oportunidade_id,
@@ -20,9 +23,16 @@ public record OportunidadeResponseDTO(
         int cargaHoraria,
         BigDecimal remuneracao,
         String beneficios,
-        String requisitos
+        String requisitos,
+        List<InscricaoResponseDTO> inscricoes   // <- adiciona aqui
 ) {
     public static OportunidadeResponseDTO from(Oportunidade op) {
+        List<InscricaoResponseDTO> inscricoesDTO = op.getInscricoes() != null
+                ? op.getInscricoes().stream()
+                .map(i -> InscricaoResponseDTO.fromEntity(i, i.getCandidato().getNome(), i.getOportunidade().getTitulo()))
+                .collect(Collectors.toList())
+                : List.of();
+
         return new OportunidadeResponseDTO(
                 op.getId(),
                 op.getInstituicao() != null ? op.getInstituicao().getId() : null,
@@ -37,7 +47,9 @@ public record OportunidadeResponseDTO(
                 op.getCargaHoraria(),
                 op.getRemuneracao(),
                 op.getBeneficios(),
-                op.getRequisitos()
+                op.getRequisitos(),
+                inscricoesDTO   // <- passa a lista convertida
         );
     }
 }
+

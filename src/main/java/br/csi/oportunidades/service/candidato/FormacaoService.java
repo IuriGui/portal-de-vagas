@@ -19,19 +19,18 @@ public class FormacaoService {
 
     private final FormacaoAcademicaRepository foa;
     private final CandidatoService candidatoService;
-    private final UsuarioAutenticado usuarioAutenticado;
 
 
 
     public FormacaoAcademica addFormacaoAcademica(FormacaoAcademica fa) {
-        fa.setCandidato(candidatoService.findByIdUsuario(usuarioAutenticado.getUserId()));
+        fa.setCandidato(candidatoService.findById(fa.getCandidato().getId()));
         return foa.save(fa);
     }
 
     public List<FormacaoAcademica> getFormacoesAcademicas(Long idUCandidato) {
 
         if (idUCandidato == null) {
-            Candidato c = candidatoService.findByIdUsuario(usuarioAutenticado.getUserId());
+            Candidato c = candidatoService.findById(UsuarioAutenticado.getUserId());
             return foa.findByCandidatoId(c.getId());
         } else{
             return foa.findByCandidatoId(idUCandidato);
@@ -42,11 +41,8 @@ public class FormacaoService {
 
     public FormacaoAcademica updateFormacaoAcademica(FormacaoAcademica nova, Long id) throws AccessDeniedException {
 
-        Candidato c = candidatoService.findByIdUsuario(usuarioAutenticado.getUserId());
-        if(!usuarioAutenticado.isUsuarioLogado(c.getUsuario().getId())){
-            throw new AccessDeniedException("Não autorizado");
+        Candidato c = candidatoService.findById(UsuarioAutenticado.getUserId());
 
-        }
         FormacaoAcademica formacaoExistente = foa.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Formação não encontrada"));
 

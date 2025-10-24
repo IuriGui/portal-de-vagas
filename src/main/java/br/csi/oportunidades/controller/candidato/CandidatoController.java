@@ -1,10 +1,10 @@
 package br.csi.oportunidades.controller.candidato;
 
 
-import br.csi.oportunidades.model.Inscricao;
+import br.csi.oportunidades.model.inscricao.Inscricao;
 import br.csi.oportunidades.service.candidato.CandidatoService;
-import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class CandidatoController {
 
     private final CandidatoService candidatoService;
-    private final UsuarioAutenticado usuarioAutenticado;
 
 
 
     @PostMapping("/me/inscrever/{id}")
-    public void inscrever(@RequestBody Inscricao i, @PathVariable Long id) {
-        candidatoService.inscrever(i);
+    public ResponseEntity<Inscricao> inscrever(@PathVariable Long id) {
+        return candidatoService.inscreverEmOportunidade(id);
     }
 
 

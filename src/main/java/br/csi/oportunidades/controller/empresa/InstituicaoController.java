@@ -1,4 +1,4 @@
-package br.csi.oportunidades.controller;
+package br.csi.oportunidades.controller.empresa;
 
 import br.csi.oportunidades.dto.instituicao.InstituicaoResponseDTO;
 
@@ -35,7 +35,6 @@ public class InstituicaoController {
         instituicaoService.deleteInstituicao(id);
         return ResponseEntity.ok().build();
     }
-
 
 
 }

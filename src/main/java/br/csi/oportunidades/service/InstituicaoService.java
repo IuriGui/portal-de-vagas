@@ -3,6 +3,7 @@ package br.csi.oportunidades.service;
 
 import br.csi.oportunidades.dto.instituicao.InstituicaoResponseDTO;
 import br.csi.oportunidades.model.Instituicao;
+import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.repository.InstituicaoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -43,5 +45,10 @@ public class InstituicaoService {
         }
         instituicaoRepository.deleteById(id);
     }
+
+    public Instituicao findByUser(UUID idUsuario) {
+        return instituicaoRepository.findByUsuarioId(idUsuario);
+    }
+
 
 }

@@ -1,14 +1,17 @@
 package br.csi.oportunidades.model.oportunidade;
 
 
+import br.csi.oportunidades.dto.inscricao.InscricaoResponseDTO;
 import br.csi.oportunidades.model.Endereco;
 import br.csi.oportunidades.model.Instituicao;
+import br.csi.oportunidades.model.inscricao.Inscricao;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "oportunidade")
@@ -50,5 +53,8 @@ public class Oportunidade {
     private String beneficios;
 
     private String requisitos;
+
+    @OneToMany(mappedBy = "oportunidade", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Inscricao> inscricoes;
 
 }

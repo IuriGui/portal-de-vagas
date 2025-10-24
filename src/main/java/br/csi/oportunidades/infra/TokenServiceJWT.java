@@ -1,5 +1,6 @@
 package br.csi.oportunidades.infra;
 
+import br.csi.oportunidades.infra.security.MyUserDetails;
 import br.csi.oportunidades.model.Users;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -18,14 +19,15 @@ import java.util.UUID;
 @Service
 public class TokenServiceJWT {
 
-    public String gerarToken(User user, UUID id){
+    public String gerarToken(MyUserDetails userDetails, UUID id, Long tipoId){
         try {
             Algorithm algorithm = Algorithm.HMAC256("POO2");
             return JWT.create()
                     .withIssuer("API de Portal De Vagas")
-                    .withSubject(user.getUsername())
-                    .withClaim("ROLE", user.getAuthorities().stream().toList().get(0).toString())
-                    .withClaim("id", id.toString())
+                    .withSubject(userDetails.getUsername())
+                    .withClaim("ROLE", userDetails.getAuthorities().stream().toList().get(0).toString())
+                    .withClaim("idUsuario", id.toString())
+                    .withClaim("tipoId", tipoId != null ? tipoId.toString() : null)
                     .withExpiresAt(dataExpiracao())
                     .sign(algorithm);
         } catch (JWTCreationException e) {

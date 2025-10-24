@@ -27,7 +27,7 @@ public class HabilidadeService {
     public Habilidade update(Habilidade habilidade, Long id) {
 
         if(!habilidadeRepository.existsById(id)) {
-            throw new NoSuchElementException("Instituição não encontrada");
+            throw new NoSuchElementException("habilidade não encontrada");
         }
 
         habilidade.setId(id);

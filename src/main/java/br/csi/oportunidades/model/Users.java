@@ -20,7 +20,6 @@ public class Users {
     @GeneratedValue
     private UUID id;
     private String email;
-
     @JsonIgnore
     private String senha;
 
