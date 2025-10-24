@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(
 		info = @Info(
-				title = "titlle",
+				title = "API PortalDeVagas",
 				version = "1.0.1",
 				description = "API",
 				contact = @Contact(name = "Suporte", email = "iuriguilhermesantos@gmail.com")

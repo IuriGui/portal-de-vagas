@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .sessionManagement(sm-> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/oportunidade").hasRole("EMPRESA")
                         .requestMatchers(HttpMethod.PUT, "/usuario/oportunidade/*").hasRole("EMPRESA") //não implementada
                         .requestMatchers(HttpMethod.GET, "/usuario/oportunidade").hasRole("EMPRESA")
