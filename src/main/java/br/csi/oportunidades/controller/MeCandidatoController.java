@@ -2,7 +2,6 @@ package br.csi.oportunidades.controller;
 
 import br.csi.oportunidades.dto.Views;
 import br.csi.oportunidades.dto.usuario.InscricaoResponseDTO;
-import br.csi.oportunidades.model.inscricao.Inscricao;
 import br.csi.oportunidades.service.candidato.CandidatoService;
 import br.csi.oportunidades.util.UsuarioAutenticado;
 import com.fasterxml.jackson.annotation.JsonView;

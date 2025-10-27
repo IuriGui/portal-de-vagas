@@ -3,12 +3,8 @@ package br.csi.oportunidades.dto.usuario;
 import br.csi.oportunidades.dto.CandidatoResponseDTO;
 import br.csi.oportunidades.dto.OportunidadeResponseDT0;
 import br.csi.oportunidades.dto.Views;
-import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.inscricao.StatusInscricao;
-import br.csi.oportunidades.model.oportunidade.Oportunidade;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -6,10 +6,8 @@ import br.csi.oportunidades.dto.OportunidadeResponseDT0;
 import br.csi.oportunidades.dto.OportunidadeUpdateDTO;
 import br.csi.oportunidades.model.Endereco;
 import br.csi.oportunidades.model.Instituicao;
-import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.model.oportunidade.AreaAtuacao;
 import br.csi.oportunidades.model.oportunidade.Oportunidade;
-import br.csi.oportunidades.repository.AreaAtuacaoRepository;
 import br.csi.oportunidades.repository.OportunidadeRepository;
 import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
@@ -28,13 +26,10 @@ import java.util.Optional;
 public class OportunidadeService {
 
 
-    @Autowired
     private ModelMapper mp;
-    private UsuarioAutenticado usuarioAutenticado;
 
     private final InstituicaoService instituicaoService;
     private OportunidadeRepository or;
-    @Autowired
     private AreaAtuacaoService areaAtuacaoService;
 
 
@@ -83,7 +78,7 @@ public class OportunidadeService {
     //EDICAO
     public OportunidadeResponseDT0 inserirOportunidade(OportunidadeRequestDTO oportunidade){
 
-        System.out.println("[OportunidadeService.inserirOportunidade] ");;
+        System.out.println("[OportunidadeService.inserirOportunidade] ");
         Oportunidade n = mp.map(oportunidade, Oportunidade.class);
 
 

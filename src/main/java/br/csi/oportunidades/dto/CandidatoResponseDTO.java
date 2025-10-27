@@ -1,18 +1,15 @@
 package br.csi.oportunidades.dto;
 
-import br.csi.oportunidades.model.Endereco;
-import br.csi.oportunidades.model.Users;
+
 import br.csi.oportunidades.model.candidato.ExperienciaProfissional;
 import br.csi.oportunidades.model.candidato.FormacaoAcademica;
 import br.csi.oportunidades.model.candidato.Habilidade;
 import br.csi.oportunidades.model.inscricao.Inscricao;
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

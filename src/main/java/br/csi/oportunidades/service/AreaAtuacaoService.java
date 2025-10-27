@@ -4,7 +4,6 @@ package br.csi.oportunidades.service;
 import br.csi.oportunidades.model.oportunidade.AreaAtuacao;
 import br.csi.oportunidades.repository.AreaAtuacaoRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.stereotype.Service;
 
 @Service

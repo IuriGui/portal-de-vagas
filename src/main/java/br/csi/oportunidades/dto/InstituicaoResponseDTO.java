@@ -1,9 +1,7 @@
 package br.csi.oportunidades.dto;
 
-import br.csi.oportunidades.model.Endereco;
 import br.csi.oportunidades.model.Users;
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 

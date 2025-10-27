@@ -1,11 +1,7 @@
 package br.csi.oportunidades.dto;
 
-import br.csi.oportunidades.model.Endereco;
-import br.csi.oportunidades.model.Instituicao;
 import br.csi.oportunidades.model.inscricao.Inscricao;
-import br.csi.oportunidades.model.oportunidade.AreaAtuacao;
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
