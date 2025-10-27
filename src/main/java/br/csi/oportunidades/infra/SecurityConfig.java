@@ -31,12 +31,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario/oportunidade").hasRole("EMPRESA")
-                        .requestMatchers(HttpMethod.PUT, "/usuario/oportunidade/*").hasRole("EMPRESA") //não implementada
-                        .requestMatchers(HttpMethod.GET, "/usuario/oportunidade").hasRole("EMPRESA")
-                        .requestMatchers(HttpMethod.DELETE, "/usuario/oportunidade").hasRole("EMPRESA")
-                        .requestMatchers(HttpMethod.POST, "/oportunidade/*/candidatar").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.DELETE, "/oportunidade/*/retirar").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.POST, "/me/oportunidades").hasRole("EMPRESA")
+                        .requestMatchers(HttpMethod.GET, "/me/oportunidades").hasRole("EMPRESA")
+                        .requestMatchers(HttpMethod.DELETE, "/me/oportunidades").hasRole("EMPRESA")
+                        .requestMatchers(HttpMethod.POST ,"/portalvagas/user/createUser").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/oportunidade/*").permitAll()
                         .requestMatchers("/error").permitAll()

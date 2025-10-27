@@ -1,8 +1,8 @@
 package br.csi.oportunidades.service;
 
 
-import br.csi.oportunidades.dto.oportunidade.OportunidadeRequestDTO;
-import br.csi.oportunidades.dto.oportunidade.OportunidadeResponseDTO;
+import br.csi.oportunidades.dto.OportunidadeRequestDTO;
+import br.csi.oportunidades.dto.OportunidadeResponseDT0;
 import br.csi.oportunidades.model.Instituicao;
 import br.csi.oportunidades.model.oportunidade.AreaAtuacao;
 import br.csi.oportunidades.model.oportunidade.Oportunidade;
@@ -10,86 +10,37 @@ import br.csi.oportunidades.repository.AreaAtuacaoRepository;
 import br.csi.oportunidades.repository.OportunidadeRepository;
 import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class OportunidadeService {
 
-    private final OportunidadeRepository oportunidadeRepository;
-    private final AreaAtuacaoRepository areaAtuacaoRepository;
-    private final InstituicaoService instituicaoService;
 
-    public List<OportunidadeResponseDTO> getOportunidades(){
-        List<OportunidadeResponseDTO> op = new java.util.ArrayList<>(List.of());
-        for(Oportunidade o : this.oportunidadeRepository.findAll()){
-            op.add(OportunidadeResponseDTO.from(o));
+    @Autowired
+    private ModelMapper mp;
+    private UsuarioAutenticado usuarioAutenticado;
+    private InstituicaoService instituicaoService;
+    private OportunidadeRepository or;
+
+
+    public OportunidadeResponseDT0 inserirOportunidade(OportunidadeRequestDTO oportunidade){
+        Oportunidade n = mp.map(oportunidade, Oportunidade.class);
+        if(!UsuarioAutenticado.isUsuarioLogado(UsuarioAutenticado.getUserId())){
+            throw new AuthorizationDeniedException("Voce nao pode modificar este recurso");
         }
-        return op;
-    }
-
-    public List<OportunidadeResponseDTO> getOportunidadesLogado(){
-        List<OportunidadeResponseDTO> op = new java.util.ArrayList<>(List.of());
-        for(Oportunidade o : this.oportunidadeRepository.findByInstituicaoId(UsuarioAutenticado.getUserId())){
-            op.add(OportunidadeResponseDTO.from(o));
+        if(instituicaoService.existsById(n.getInstituicao().getId())){
+            throw new NoSuchElementException("Not Found");
         }
-        return op;
-    }
-
-    public OportunidadeResponseDTO createOportunidade(OportunidadeRequestDTO dto){
-        Oportunidade op = new Oportunidade();
-
-        Optional<Instituicao> i = instituicaoService.findById(UsuarioAutenticado.getUserId());
-        Optional<AreaAtuacao> a = areaAtuacaoRepository.findById(dto.areaAtuacao_id());
-
-        if(i.isPresent() && a.isPresent()){
-            op.setInstituicao(i.get());
-            op.setAreaAtuacao(a.get());
-            op.setTitulo(dto.titulo());
-            op.setDescricao(dto.descricao());
-            op.setDataPublicacao(dto.dataPublicacao());
-            op.setDataValidade(dto.dataValidade());
-            op.setRemoto(dto.remoto());
-            op.setCargaHoraria(dto.cargaHoraria());
-            op.setRemuneracao(dto.remuneracao());
-            op.setBeneficios(dto.beneficios());
-            op.setRequisitos(dto.requisitos());
-            return OportunidadeResponseDTO.from(oportunidadeRepository.save(op));
-
-        }
-
-        return null;
+        Oportunidade savedOP =  or.save(n);
+        return mp.map(savedOP, OportunidadeResponseDT0.class);
 
     }
-
-    public OportunidadeResponseDTO getOportunidade(Long id) {
-        return oportunidadeRepository.findById(id)
-                .map(OportunidadeResponseDTO::from)
-                .orElseThrow(NoSuchElementException::new);
-    }
-
-    public Oportunidade findById(Long id) {
-        return oportunidadeRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Oportunidade não encontrada com id: " + id));
-    }
-
-    public void deleteOportunidade(Long id) {
-        if (!oportunidadeRepository.existsById(id)) {
-            throw new NoSuchElementException("Oportunidade não encontrada");
-        }
-        oportunidadeRepository.deleteById(id);
-    }
-
-    public boolean isOportunidadeOpen(Oportunidade op) {
-        return op.getDataValidade().getTime() > System.currentTimeMillis();
-    }
-
-
-
-
 }

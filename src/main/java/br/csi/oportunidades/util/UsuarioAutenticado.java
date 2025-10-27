@@ -30,6 +30,7 @@ public class UsuarioAutenticado {
 
         var principal = authentication.getPrincipal();
         if (principal instanceof MyUserDetails userDetails) {
+            System.out.println("Tipo de conta: " + userDetails.getTipoConta());
             return userDetails.getTipoConta();
         }
         return null;
