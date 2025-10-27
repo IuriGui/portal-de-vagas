@@ -1,5 +1,9 @@
-package br.csi.oportunidades.dto;
+package br.csi.oportunidades.dto.oportunidade;
 
+import br.csi.oportunidades.dto.AreaAtuacaoResponseDTO;
+import br.csi.oportunidades.dto.EnderecoDTO;
+import br.csi.oportunidades.dto.InstituicaoResponseDTO;
+import br.csi.oportunidades.dto.Views;
 import br.csi.oportunidades.model.inscricao.Inscricao;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;

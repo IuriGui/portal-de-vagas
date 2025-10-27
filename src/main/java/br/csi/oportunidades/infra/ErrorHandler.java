@@ -56,10 +56,26 @@ public class ErrorHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("erro", ex.getMessage());
-        errors.put("timestamp", new Date());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errors);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", new Date());
+
+
+        String errorMessage = ex.getMostSpecificCause().getMessage();
+
+
+        if (errorMessage.contains("inscricao_candidato_id_oportunidade_id_key")) {
+
+            body.put("erro", "Você já se inscreveu para esta vaga.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+
+        } else if(errorMessage.contains("usuario_email_key")) {
+            body.put("erro", "Este email ja esta cadastrado");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        }
+
+        body.put("erro", "Não foi possível processar a solicitação. Verifique os dados enviados.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
 

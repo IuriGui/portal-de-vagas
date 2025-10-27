@@ -1,5 +1,6 @@
 package br.csi.oportunidades.infra;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,11 +32,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST ,"/user/createUser").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/oportunidade/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/me/oportunidades").hasRole("EMPRESA")
-                        .requestMatchers(HttpMethod.GET, "/me/oportunidades").hasRole("EMPRESA")
-                        .requestMatchers(HttpMethod.DELETE, "/me/oportunidades").hasRole("EMPRESA")
+                        .requestMatchers(HttpMethod.GET, "/candidatos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/candidatos/*").permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+
+
+                        .requestMatchers(HttpMethod.GET, "/me/inscricoes/").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.POST, "me/inscricoes/*/inscrever").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.DELETE, "me/inscricoes/*/cancelar").hasRole("CANDIDATO")
+
                         .anyRequest().authenticated())
                 .addFilterBefore(this.autenticacaoFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

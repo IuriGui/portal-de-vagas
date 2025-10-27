@@ -1,7 +1,8 @@
 package br.csi.oportunidades.service;
 
 
-import br.csi.oportunidades.dto.usuario.InscricaoResponseDTO;
+import br.csi.oportunidades.dto.inscricao.InscricaoResponseDTO;
+import br.csi.oportunidades.dto.inscricao.InscricaoResponseParaCandidatoDTO;
 import br.csi.oportunidades.model.TipoConta;
 import br.csi.oportunidades.model.inscricao.Inscricao;
 import br.csi.oportunidades.repository.InscricaoRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @AllArgsConstructor
@@ -25,8 +27,6 @@ public class InscricaoService {
 
     private ModelMapper modelMapper;
 
-    private final OportunidadeService oportunidadeService;
-
     public List<InscricaoResponseDTO> listarInscricoes(Long id){
         if(UsuarioAutenticado.getTipoConta() == TipoConta.CANDIDATO){
             List<InscricaoResponseDTO> l = new ArrayList<>();
@@ -38,12 +38,22 @@ public class InscricaoService {
      return null;
     }
 
-    public InscricaoResponseDTO create(Inscricao i){
+    public InscricaoResponseParaCandidatoDTO create(Inscricao i){
         Inscricao in = inscricaoRepository.save(i);
-        return modelMapper.map(in, InscricaoResponseDTO.class);
+        return modelMapper.map(in, InscricaoResponseParaCandidatoDTO.class);
     }
 
 
+    public void cancelarInscricaoPorId(Long id){
+        if(!inscricaoRepository.existsById(id)){
+            throw new NoSuchElementException("Inscricao nao encontrada");
+        }
+        inscricaoRepository.deleteById(id);
+    }
+
+    public Inscricao recuperarInscricaoPorId(Long id){
+        return  inscricaoRepository.findById(id).orElse(null);
+    }
 
 
 }

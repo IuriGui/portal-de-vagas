@@ -1,9 +1,9 @@
 package br.csi.oportunidades.service;
 
 
-import br.csi.oportunidades.dto.OportunidadeRequestDTO;
-import br.csi.oportunidades.dto.OportunidadeResponseDT0;
-import br.csi.oportunidades.dto.OportunidadeUpdateDTO;
+import br.csi.oportunidades.dto.oportunidade.OportunidadeRequestDTO;
+import br.csi.oportunidades.dto.oportunidade.OportunidadeResponseDT0;
+import br.csi.oportunidades.dto.oportunidade.OportunidadeUpdateDTO;
 import br.csi.oportunidades.model.Endereco;
 import br.csi.oportunidades.model.Instituicao;
 import br.csi.oportunidades.model.oportunidade.AreaAtuacao;
@@ -12,7 +12,6 @@ import br.csi.oportunidades.repository.OportunidadeRepository;
 import br.csi.oportunidades.util.UsuarioAutenticado;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +34,7 @@ public class OportunidadeService {
 
     //LEITURA
 
+        //Com id
     public List<OportunidadeResponseDT0> listarOportunidades(Long id){
         List<OportunidadeResponseDT0> listaOportunidades = new ArrayList<>();
 
@@ -42,6 +42,16 @@ public class OportunidadeService {
             throw new NoSuchElementException("Instituicao nao encontrada");
         }
         for(Oportunidade o : or.findAllByInstituicaoId(id)){
+            listaOportunidades.add(mp.map(o, OportunidadeResponseDT0.class));
+        }
+        return  listaOportunidades;
+    }
+
+        //Sem id
+    public List<OportunidadeResponseDT0> listarOportunidades(){
+        List<OportunidadeResponseDT0> listaOportunidades = new ArrayList<>();
+
+        for(Oportunidade o : or.findAll()){
             listaOportunidades.add(mp.map(o, OportunidadeResponseDT0.class));
         }
         return  listaOportunidades;
@@ -86,8 +96,7 @@ public class OportunidadeService {
         AreaAtuacao a = areaAtuacaoService.findById(oportunidade.getAreaAtuacao_id());
         n.setAreaAtuacao(a);
 
-        Instituicao in = new Instituicao();
-        in.setId(oportunidade.getInstituicao_id());
+        Instituicao in = instituicaoService.findById(oportunidade.getInstituicao_id());
         n.setInstituicao(in);
 
         System.out.println("[DADOS DA OPORTUNIDADE MAPEADA]");

@@ -1,4 +1,4 @@
-package br.csi.oportunidades.dto.usuario;
+package br.csi.oportunidades.dto.inscricao;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

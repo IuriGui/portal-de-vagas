@@ -1,7 +1,6 @@
-package br.csi.oportunidades.dto.usuario;
+package br.csi.oportunidades.dto.inscricao;
 
-import br.csi.oportunidades.dto.CandidatoResponseDTO;
-import br.csi.oportunidades.dto.OportunidadeResponseDT0;
+import br.csi.oportunidades.dto.oportunidade.OportunidadeResponseDT0;
 import br.csi.oportunidades.dto.Views;
 import br.csi.oportunidades.model.inscricao.StatusInscricao;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -19,7 +18,7 @@ public class InscricaoResponseDTO {
     private Long id;
 
     @JsonView(Views.Publico.class)
-    private CandidatoResponseDTO candidato;
+    private InscricaoResponseParaCandidatoDTO candidato;
 
     @JsonView(Views.Publico.class)
     private OportunidadeResponseDT0 oportunidade;

@@ -1,6 +1,8 @@
-package br.csi.oportunidades.dto;
+package br.csi.oportunidades.dto.candidato;
 
 
+import br.csi.oportunidades.dto.EnderecoDTO;
+import br.csi.oportunidades.dto.Views;
 import br.csi.oportunidades.model.candidato.ExperienciaProfissional;
 import br.csi.oportunidades.model.candidato.FormacaoAcademica;
 import br.csi.oportunidades.model.candidato.Habilidade;
@@ -15,7 +17,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class CandidatoResponseDTO {
+public class CandidatoPublicResponseDTO {
 
     @JsonView(Views.Publico.class)
     private Long id;
@@ -32,13 +34,13 @@ public class CandidatoResponseDTO {
     @JsonView(Views.Publico.class)
     private String curriculoUrl;
 
-    @JsonView(Views.Detalhado.class)
+    @JsonView(Views.Publico.class)
     private List<ExperienciaProfissional> experiencias;
 
-    @JsonView(Views.Detalhado.class)
+    @JsonView(Views.Publico.class)
     private List<FormacaoAcademica> formacoesAcademicas;
 
-    @JsonView(Views.Detalhado.class)
+    @JsonView(Views.Publico.class)
     private Set<Habilidade> habilidades;
 
     @JsonView(Views.Detalhado.class)
