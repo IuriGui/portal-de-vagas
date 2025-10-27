@@ -1,4 +1,4 @@
-package br.csi.oportunidades.util;
+package br.csi.oportunidades.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

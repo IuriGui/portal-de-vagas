@@ -1,7 +1,9 @@
 package br.csi.oportunidades.model.candidato;
 
 
+import br.csi.oportunidades.dto.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +19,10 @@ public class Habilidade {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(Views.Publico.class)
     private Long id;
 
+    @JsonView(Views.Publico.class)
     private String nome;
 
     @ManyToMany(mappedBy = "habilidades")

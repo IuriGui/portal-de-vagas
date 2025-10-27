@@ -30,11 +30,11 @@ public class OportunidadeUpdateDTO {
     @Future(message = "A data de validade deve ser uma data futura.")
     private Timestamp dataValidade;
 
-    private Boolean remoto; // Boolean wrapper permite null para não atualizar
+    private Boolean remoto;
 
     @Min(value = 1, message = "A carga horária deve ser de pelo menos 1 hora.")
     @Max(value = 80, message = "A carga horária não pode exceder 80 horas (semanal ou quinzenal).")
-    private Integer cargaHoraria; // Integer wrapper para null
+    private Integer cargaHoraria;
 
     @DecimalMin(value = "0.00",  message = "A remuneração não pode ser negativa.")
     private BigDecimal remuneracao;

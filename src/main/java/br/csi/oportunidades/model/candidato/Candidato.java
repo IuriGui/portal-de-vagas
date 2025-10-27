@@ -27,7 +27,7 @@ public class Candidato {
     private String telefone;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     @JsonIgnore
     private Endereco endereco;
@@ -54,7 +54,6 @@ public class Candidato {
     )
     private Set<Habilidade> habilidades = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "candidato", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inscricao> inscricoes;
 
