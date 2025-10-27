@@ -1,5 +1,6 @@
 package br.csi.oportunidades.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,8 @@ public class Endereco {
     private Long id;
 
     private String cep;
+
+    @JsonProperty("estado")
     private String uf;
     private String cidade;
     private String bairro;

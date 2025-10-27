@@ -1,5 +1,6 @@
 package br.csi.oportunidades.infra;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,14 +9,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.rmi.UnexpectedException;
+import java.util.*;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -32,16 +32,20 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, Object> errors = new HashMap<>();
-        errors.put("error", "Erro de Validação");
+    public ResponseEntity handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<FieldError> errors = ex.getFieldErrors();
+        List<DadosErroValidacao> dados = new ArrayList<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
+        for(FieldError fe : errors){
+            dados.add(new DadosErroValidacao(fe.getField(), fe.getDefaultMessage()));
+        }
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST); // Retorna 400
+        return ResponseEntity.badRequest().body(dados);
+
     }
+
+
+    private record DadosErroValidacao(String campo, String mensagem){}
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAuthorizationDenied(AuthorizationDeniedException ex) {

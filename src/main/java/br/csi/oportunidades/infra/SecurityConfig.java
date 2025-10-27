@@ -30,14 +30,13 @@ public class SecurityConfig {
                 .sessionManagement(sm-> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST ,"/user/createUser").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/oportunidade/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/me/oportunidades").hasRole("EMPRESA")
                         .requestMatchers(HttpMethod.GET, "/me/oportunidades").hasRole("EMPRESA")
                         .requestMatchers(HttpMethod.DELETE, "/me/oportunidades").hasRole("EMPRESA")
-                        .requestMatchers(HttpMethod.POST ,"/portalvagas/user/createUser").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/oportunidade/*").permitAll()
-                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(this.autenticacaoFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

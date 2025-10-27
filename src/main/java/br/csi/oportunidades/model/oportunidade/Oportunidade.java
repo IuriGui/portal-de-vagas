@@ -30,7 +30,7 @@ public class Oportunidade {
     @JoinColumn(name = "area_atuacao_id")
     private AreaAtuacao areaAtuacao;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
@@ -55,5 +55,26 @@ public class Oportunidade {
 
     @OneToMany(mappedBy = "oportunidade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inscricao> inscricoes;
+
+    @Override
+    public String toString() {
+        return "Oportunidade {" +
+                "\n  id = " + (id != null ? id : "vazio") +
+                ",\n  instituicao = " + (instituicao != null ? instituicao.getNomeFantasia() : "vazio") +
+                ",\n  areaAtuacao = " + (areaAtuacao != null ? areaAtuacao.getNome() : "vazio") +
+                ",\n  endereco = " + (endereco != null ? endereco.toString() : "vazio") +
+                ",\n  titulo = '" + (titulo != null && !titulo.isEmpty() ? titulo : "vazio") + '\'' +
+                ",\n  descricao = '" + (descricao != null && !descricao.isEmpty() ? descricao : "vazio") + '\'' +
+                ",\n  dataPublicacao = " + (dataPublicacao != null ? dataPublicacao : "vazio") +
+                ",\n  dataValidade = " + (dataValidade != null ? dataValidade : "vazio") +
+                ",\n  remoto = " + remoto +
+                ",\n  cargaHoraria = " + (cargaHoraria > 0 ? cargaHoraria : "vazio") +
+                ",\n  remuneracao = " + (remuneracao != null ? remuneracao : "vazio") +
+                ",\n  beneficios = '" + (beneficios != null && !beneficios.isEmpty() ? beneficios : "vazio") + '\'' +
+                ",\n  requisitos = '" + (requisitos != null && !requisitos.isEmpty() ? requisitos : "vazio") + '\'' +
+                ",\n  inscricoes = " + (inscricoes != null && !inscricoes.isEmpty() ? inscricoes.size() + " inscrições" : "vazio") +
+                "\n}";
+    }
+
 
 }
