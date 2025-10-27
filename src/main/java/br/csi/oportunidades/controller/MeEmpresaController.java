@@ -5,6 +5,7 @@ import br.csi.oportunidades.dto.oportunidade.OportunidadeRequestDTO;
 import br.csi.oportunidades.dto.oportunidade.OportunidadeResponseDT0;
 import br.csi.oportunidades.dto.oportunidade.OportunidadeUpdateDTO;
 import br.csi.oportunidades.dto.Views;
+import br.csi.oportunidades.model.oportunidade.Oportunidade;
 import br.csi.oportunidades.service.OportunidadeService;
 import br.csi.oportunidades.util.UsuarioAutenticado;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,10 +34,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/me/oportunidades")
 @AllArgsConstructor
-@Tag(name = "Oportunidades logado", description = "Gerencia as oportunidades da empresa autenticada")
+@Tag(name = "Empresa logada", description = "Gerencia as oportunidades da empresa autenticada")
 public class MeEmpresaController {
 
     private final OportunidadeService oportunidadeService;
+    private final ModelMapper modelMapper;
 
     @PostMapping
     @JsonView(Views.Publico.class)
@@ -75,13 +78,13 @@ public class MeEmpresaController {
             @ApiResponse(responseCode = "404", description = "Oportunidade não encontrada", content = @Content),
             @ApiResponse(responseCode = "401", description = "Usuário não autenticado", content = @Content)
     })
+
     public ResponseEntity<?> deletarOportunidade(
             @Parameter(description = "ID da oportunidade a ser excluída", required = true, example = "1")
             @PathVariable Long idOportunidade){
         oportunidadeService.deletarOportunidade(idOportunidade);
         return ResponseEntity.noContent().build();
     }
-
     @GetMapping
     @JsonView(Views.Publico.class)
     @Operation(
@@ -94,10 +97,15 @@ public class MeEmpresaController {
                             array = @ArraySchema(schema = @Schema(implementation = OportunidadeResponseDT0.class)))),
             @ApiResponse(responseCode = "401", description = "Usuário não autenticado", content = @Content)
     })
+
     public ResponseEntity<List<OportunidadeResponseDT0>> listarOportunidades(){
         return ResponseEntity.ok(oportunidadeService.listarOportunidades(UsuarioAutenticado.getUserId()));
     }
-
+    @JsonView(Views.Detalhado.class)
+    @GetMapping("/{id}")
+    public ResponseEntity<OportunidadeResponseDT0> listarOportunidades(Long id){
+        return ResponseEntity.ok(modelMapper.map(oportunidadeService.recuperarPorId(id),  OportunidadeResponseDT0.class));
+    }
     @PutMapping("/{idOportunidade}")
     @Operation(
             summary = "Atualizar oportunidade",
