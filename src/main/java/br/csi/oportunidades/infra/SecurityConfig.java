@@ -35,7 +35,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/candidatos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/candidatos/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/instituicoes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/instituicoes/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/oportunidades").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/oportunidades/*").permitAll()
+
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/me/oportunidades").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.DELETE, "/me/oportunidades/*").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.GET, "/me/oportunidades").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.PUT, "/me/oportunidades/*").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.GET, "/me/detalhes").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.PUT, "/me/detalhes/editar").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.GET, "/me/inscricoes").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.GET, "/me/inscricoes/*").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.DELETE, "/me/inscricoes/*/cancelar").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.POST, "/inscricoes/*/inscrever").hasRole("CANDIDATO")
+
+
 
 
                         .requestMatchers(HttpMethod.GET, "/me/inscricoes/").hasRole("CANDIDATO")

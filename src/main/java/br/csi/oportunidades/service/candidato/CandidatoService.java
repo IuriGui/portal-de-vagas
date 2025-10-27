@@ -60,6 +60,7 @@ public class CandidatoService {
         return inscricaoService.listarInscricoes(id);
     }
 
+    @Transactional
     public InscricaoResponseParaCandidatoDTO inscreverEmOportunidade(Long idOportunidade){
 
         Candidato candidato = this.recuperarPorId(UsuarioAutenticado.getUserId());

@@ -10,6 +10,15 @@ import br.csi.oportunidades.model.Users;
 import br.csi.oportunidades.service.candidato.CandidatoService;
 import br.csi.oportunidades.service.InstituicaoService;
 import br.csi.oportunidades.service.UsersService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,6 +33,7 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/user")
+@Tag(name = "Usuários", description = "Gerencia o cadastro e operações de usuários (candidatos e empresas)")
 public class UsersController {
 
     private final UsersService usersService;
@@ -33,13 +43,21 @@ public class UsersController {
 
     @PostMapping("/createUser")
     @Transactional
+    @Operation(summary = "Registrar novo usuário (Candidato ou Empresa)",
+            description = "Cria um novo usuário base e, dependendo do 'tipoConta' (CANDIDATO ou EMPRESA), cria o perfil correspondente (Candidato ou Instituicao).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Users.class)),
+                    headers = @Header(name = "Location", description = "URL para acessar o usuário criado")),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos (ex: email já existe, tipo de conta inválido, campos obrigatórios ausentes)", content = @Content)
+    })
     public ResponseEntity<Users> register(@Valid @RequestBody UserCreateRequest request, UriComponentsBuilder uriBuilder) {
         //Cria usuário base
         Users user = new Users();
         user.setEmail(request.getEmail());
         user.setSenha(request.getSenha());
         user.setTipoConta(request.getTipoConta());
-        
+
         Users savedUser = usersService.save(user);
 
         if (savedUser.getTipoConta() == TipoConta.CANDIDATO) {
@@ -50,7 +68,7 @@ public class UsersController {
             candidato.setDataNascimento(request.getDataNascimento());
             candidato.setCurriculoUrl(request.getCurriculoUrl());
             candidato.setUsuario(savedUser);
-            
+
             candidatoService.create(candidato);
         } else if (savedUser.getTipoConta() == TipoConta.EMPRESA) {
             //Cria instituição
@@ -59,7 +77,7 @@ public class UsersController {
             instituicao.setDescricao(request.getDescricao());
             instituicao.setTelefone(request.getTelefone());
             instituicao.setUsuario(savedUser);
-            
+
             instituicaoService.create(instituicao);
         } else {
             return ResponseEntity.badRequest().build();
@@ -71,21 +89,40 @@ public class UsersController {
 
 
     @PutMapping("/update/{id}")
-    public void updateUser(@RequestBody Users user, @PathVariable UUID id) {
+    @Operation(summary = "Atualizar usuário (Endpoint de Exemplo)",
+            description = "Atualiza dados básicos de um usuário (email/senha). **Nota:** Este endpoint atualiza a entidade 'Users' diretamente. Para atualizar perfis (Candidato/Instituicao), endpoints específicos (ex: '/me/detalhes/editar') devem ser usados.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuário atualizado (retorna void)"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content)
+    })
+    public void updateUser(@RequestBody Users user,
+                           @Parameter(description = "ID (UUID) do usuário a ser atualizado") @PathVariable UUID id) {
         usersService.update(user, id);
     }
 
-   @DeleteMapping("/delete/{id}")
-   public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
-       usersService.delete(id);
-       return ResponseEntity.noContent().build();
-   }
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Excluir usuário",
+            description = "Exclui um usuário e seu perfil associado (candidato/empresa) do sistema, baseado no ID (UUID) do usuário.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Usuário excluído com sucesso", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content)
+    })
+    public ResponseEntity<Void> deleteUser(
+            @Parameter(description = "ID (UUID) do usuário a ser excluído") @PathVariable UUID id) {
+        usersService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
-   @GetMapping
+    @GetMapping
+    @Operation(summary = "Listar todos os usuários",
+            description = "Retorna uma lista de todos os usuários cadastrados no sistema (em formato DTO).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de usuários",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = UsersDTO.class))))
+    })
     public List<UsersDTO> getAllUsers() {
         return usersService.findAll();
-   }
-
-
-
+    }
 }

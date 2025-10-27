@@ -7,6 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class TokenServiceJWT {
                     .verify(token)
                     .getSubject();
         }catch (JWTVerificationException e){
-            throw new RuntimeException("Token invalido ou expirado",e);
+            throw new AuthorizationDeniedException("Token invalido ou expirado");
         }
     }
 
@@ -60,7 +61,7 @@ public class TokenServiceJWT {
                     .verify(token);
             return decodedJWT.getClaim(claimName).asString();
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("Token inválido ou expirado", e);
+            throw new AuthorizationDeniedException("Token invalido ou expirado");
         }
     }
 

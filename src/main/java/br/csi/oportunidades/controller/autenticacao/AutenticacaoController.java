@@ -7,6 +7,12 @@ import br.csi.oportunidades.model.candidato.Candidato;
 import br.csi.oportunidades.service.InstituicaoService;
 import br.csi.oportunidades.service.UsersService;
 import br.csi.oportunidades.service.candidato.CandidatoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +27,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/login")
+@Tag(name = "Usuários e Autenticação", description = "Faz o login")
 public class AutenticacaoController {
 
     private final AuthenticationManager authenticationManager;
@@ -38,16 +45,25 @@ public class AutenticacaoController {
     }
 
     @PostMapping
-    public ResponseEntity login(@RequestBody @Valid UserLoginDTO u){
+    @Operation(summary = "Realizar login", description = "Autentica um usuário com email e senha e retorna um token JWT.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login bem-sucedido",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DadosTokenJWT.class))),
+            @ApiResponse(responseCode = "401", description = "Email ou senha incorretos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    public ResponseEntity<?> login(@RequestBody @Valid UserLoginDTO u){
         try{
             Authentication authentication = new UsernamePasswordAuthenticationToken(u.email(), u.senha());
             Authentication authenticated = authenticationManager.authenticate(authentication);
-            
-            UUID id = usersService.getIdByEmail(u.email);
+
+            UUID id = usersService.getIdByEmail(u.email());
             if (id == null) {
-                return ResponseEntity.badRequest().body("Usuário não encontrado");
+                return ResponseEntity.status(404).body("Usuário não encontrado");
             }
-            
+
             Instituicao i = instituicaoService.findByUser(id);
             Candidato c = candidatoService.findByIdUsuario(id);
             Long tipoId = null;
@@ -65,7 +81,7 @@ public class AutenticacaoController {
         } catch (org.springframework.security.authentication.BadCredentialsException e) {
             return ResponseEntity.status(401).body("Email ou senha incorretos");
         } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
-            return ResponseEntity.status(401).body("Usuário não encontrado");
+            return ResponseEntity.status(404).body("Usuário não encontrado");
         } catch (ClassCastException e) {
             return ResponseEntity.status(500).body("Erro interno do servidor: " + e.getMessage());
         } catch (Exception e) {
@@ -74,9 +90,18 @@ public class AutenticacaoController {
         }
     }
 
-    private record DadosTokenJWT(String token){}
+    @Schema(description = "Token JWT de autenticação")
+    private record DadosTokenJWT(
+            @Schema(description = "Token JWT gerado", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+            String token
+    ){}
 
-
-    private record UserLoginDTO(String email, String senha){}
+    @Schema(description = "Credenciais de login do usuário")
+    private record UserLoginDTO(
+            @Schema(description = "Email do usuário", example = "usuario@email.com")
+            String email,
+            @Schema(description = "Senha do usuário", example = "senha123")
+            String senha
+    ){}
 
 }

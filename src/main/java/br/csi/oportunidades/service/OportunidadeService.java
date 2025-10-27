@@ -10,6 +10,7 @@ import br.csi.oportunidades.model.oportunidade.AreaAtuacao;
 import br.csi.oportunidades.model.oportunidade.Oportunidade;
 import br.csi.oportunidades.repository.OportunidadeRepository;
 import br.csi.oportunidades.util.UsuarioAutenticado;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -86,6 +87,7 @@ public class OportunidadeService {
 
 
     //EDICAO
+    @Transactional
     public OportunidadeResponseDT0 inserirOportunidade(OportunidadeRequestDTO oportunidade){
 
         System.out.println("[OportunidadeService.inserirOportunidade] ");
