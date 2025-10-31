@@ -41,11 +41,11 @@ public class OportunidadeController {
     }
 
     @GetMapping("/{idOportunidade}")
-    @JsonView(Views.Detalhado.class)
-    @Operation(summary = "Buscar oportunidade por ID (visão detalhada)",
-            description = "Retorna informações detalhadas de uma oportunidade de vaga específica pelo seu ID.")
+    @JsonView(Views.Publico.class)
+    @Operation(summary = "Buscar oportunidade por Id",
+            description = "Retorna informações de uma oportunidade de vaga específica pelo seu ID.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Detalhes da oportunidade",
+            @ApiResponse(responseCode = "200", description = "Oportunidade",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = OportunidadeResponseDT0.class))),
             @ApiResponse(responseCode = "404", description = "Oportunidade não encontrada", content = @Content)
