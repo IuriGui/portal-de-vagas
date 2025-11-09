@@ -1,8 +1,0 @@
-CREATE TYPE turno_enum AS ENUM ('MATUTINO', 'VESPERTINO', 'NOTURNO', 'INTEGRAL');
-CREATE TYPE modalidade_enum AS ENUM ('PRESENCIAL', 'REMOTO', 'HIBRIDO');
-
-ALTER TABLE oportunidade
-ADD COLUMN turno turno_enum NOT NULL DEFAULT 'INTEGRAL',
-ADD COLUMN modalidade modalidade_enum NOT NULL DEFAULT 'PRESENCIAL';
-
-

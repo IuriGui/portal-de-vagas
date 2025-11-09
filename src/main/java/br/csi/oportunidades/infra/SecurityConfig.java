@@ -30,34 +30,40 @@ public class SecurityConfig {
                 .sessionManagement(sm-> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.POST ,"/user/createUser").permitAll()
+                        .requestMatchers(HttpMethod.POST ,"/user/register/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/candidatos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/candidatos/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/instituicoes").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/instituicoes/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/oportunidades").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/oportunidades/*").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/swagger-ui.html", "/api-docs/swagger-config", "/api-docs").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/me/oportunidades").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.DELETE, "/me/oportunidades/*").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.GET, "/me/oportunidades").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.PUT, "/me/oportunidades/*").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.GET, "/me/detalhes").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.PUT, "/me/detalhes/editar").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.GET, "/me/inscricoes").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.GET, "/me/inscricoes/*").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.DELETE, "/me/inscricoes/*/cancelar").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.POST, "/inscricoes/*/inscrever").hasRole("CANDIDATO")
+                        .requestMatchers(HttpMethod.GET, "/opportunities").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/opportunities/*").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/me/profile").hasRole("CANDIDATE")
+                        .requestMatchers(HttpMethod.PUT, "/me/profile").hasRole("CANDIDATE")
+
+                        .requestMatchers(HttpMethod.POST, "/me/profile/experience").hasRole("CANDIDATE")
+                        .requestMatchers(HttpMethod.PUT, "/me/profile/experience/**").hasRole("CANDIDATE")
+                        .requestMatchers(HttpMethod.POST, "/me/profile/academic").hasRole("CANDIDATE")
+                        .requestMatchers(HttpMethod.PUT, "/me/profile/academic/**").hasRole("CANDIDATE")
+                        .requestMatchers(HttpMethod.GET, "/me/applications").hasRole("CANDIDATE")
+                        .requestMatchers(HttpMethod.DELETE, "/me/applications/**").hasRole("CANDIDATE")
+
+                        .requestMatchers(HttpMethod.POST, "/opportunities/*/apply").hasRole("CANDIDATE")
+
+
+
+                        .requestMatchers(HttpMethod.GET, "/opportunities/*/applications").hasRole("RECRUITER")
+                        .requestMatchers(HttpMethod.PUT, "/applications/*/status").hasRole("RECRUITER")
+
+
+
+                        .requestMatchers(HttpMethod.POST, "/opportunities").hasRole("RECRUITER")
+                        .requestMatchers(HttpMethod.PUT, "/opportunities/**").hasRole("RECRUITER")
+                        .requestMatchers(HttpMethod.DELETE, "/opportunities/**").hasRole("RECRUITER")
+                        .requestMatchers(HttpMethod.GET, "/opportunities/my-company").hasRole("RECRUITER")
 
 
 
 
-                        .requestMatchers(HttpMethod.GET, "/me/inscricoes/").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.POST, "me/inscricoes/*/inscrever").hasRole("CANDIDATO")
-                        .requestMatchers(HttpMethod.DELETE, "me/inscricoes/*/cancelar").hasRole("CANDIDATO")
 
                         .anyRequest().authenticated())
                 .addFilterBefore(this.autenticacaoFilter, UsernamePasswordAuthenticationFilter.class)

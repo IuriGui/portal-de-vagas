@@ -1,45 +1,46 @@
 package br.csi.oportunidades.dto.usuario;
 
-import br.csi.oportunidades.model.TipoConta;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.Valid;
+import br.csi.oportunidades.model.appUser.UserRoles;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 public class UserCreateRequest {
 
-    @Email
+    //Comum
+    @Email(message = "O email deve ser válido")
     @NotBlank(message = "O email é obrigatório")
     private String email;
 
     @NotBlank(message = "A senha é obrigatória.")
     @Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres.")
-    private String senha;
-
+    private String password;
 
     @NotNull(message = "O tipo de conta é obrigatório (CANDIDATO ou EMPRESA).")
-    private TipoConta tipoConta;
-    
-    // Campos específicos do candidato
-    private String nome;
+    private UserRoles role;
 
-
-    private String telefone;
+    //Candidate
+    private String candidateFullName;
+    private String CandidatePhone;
 
     @Past(message = "A data de nascimento deve ser uma data no passado.")
-    private Date dataNascimento;
+    private LocalDate birthDate;
 
-    private String curriculoUrl;
-    
-    // Campos específicos da instituição
-    private String nomeFantasia;
+    @URL(message = "A URL do currículo deve ser válida (ex: http://...)")
+    private String resumeUrl;
 
-    @Size(max = 300, message = "O limite de caracteres é 300")
-    private String descricao;
+    // Recruiter
+    private String recruiterFullName;
+
+    private String companyName;
+    private String companyPhone;
+
+
+    @Size(max = 1000, message = "A descrição não pode exceder 1000 caracteres")
+    private String companyDescription;
 }

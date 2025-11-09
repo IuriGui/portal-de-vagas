@@ -1,106 +1,114 @@
-CREATE TABLE usuario(
-                        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                        email VARCHAR(100) NOT NULL UNIQUE,
-                        senha VARCHAR(60) NOT NULL
+CREATE TABLE app_user (
+                          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                          email VARCHAR(100) NOT NULL UNIQUE,
+                          password_hash VARCHAR(60) NOT NULL,
+                          role VARCHAR(20) NOT NULL,
+                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-
-CREATE TABLE endereco(
+CREATE TABLE address (
                          id SERIAL PRIMARY KEY,
-                         cep VARCHAR(9) NOT NULL,
-                         uf char(2) NOT NULL,
-                         cidade VARCHAR(100) NOT NULL,
-                         bairro VARCHAR(100) NOT NULL,
-                         rua VARCHAR(100) NOT NULL,
-                         numero VARCHAR(10) NOT NULL,
-                         complemento VARCHAR(100),
-                         latitude DECIMAL(9,6),
-                         longitude DECIMAL(9,6)
+                         zip_code VARCHAR(9) NOT NULL,
+                         state_code CHAR(2) NOT NULL,
+                         city VARCHAR(100) NOT NULL,
+                         district VARCHAR(100) NOT NULL,
+                         street VARCHAR(100) NOT NULL,
+                         number VARCHAR(10) NOT NULL,
+                         complement VARCHAR(100),
+                         latitude DECIMAL(9, 6),
+                         longitude DECIMAL(9, 6)
 );
 
-CREATE TABLE instituicao(
-                            id SERIAL PRIMARY KEY ,
-                            nome_fantasia VARCHAR(100) NOT NULL,
-                            descricao TEXT,
-                            telefone VARCHAR(15),
-                            endereco_id INT REFERENCES endereco(id),
-                            usuario_id UUID REFERENCES usuario(id)
+CREATE TABLE company (
+                         id SERIAL PRIMARY KEY,
+                         company_name VARCHAR(100) NOT NULL,
+                         description TEXT,
+                         phone VARCHAR(15),
+                         main_address_id INT REFERENCES address(id),
+                         pending_approval boolean not null default TRUE
 );
 
-
-CREATE TABLE area_atuacao(
-                             id SERIAL PRIMARY KEY ,
-                             nome VARCHAR(100) NOT NULL
+CREATE TABLE recruiter_profile (
+                                   id SERIAL PRIMARY KEY,
+                                   user_id UUID NOT NULL UNIQUE REFERENCES app_user(id),
+                                   company_id INT NOT NULL REFERENCES company(id),
+                                   full_name VARCHAR(100) NOT NULL,
+                                   job_title VARCHAR(100),
+                                   company_role VARCHAR(20) NOT NULL DEFAULT 'MEMBER'
+                                       CHECK (company_role IN ('ADMIN', 'MEMBER')),
+                                   status VARCHAR(20) NOT NULL DEFAULT 'PENDING'
+                                       CHECK (status IN ('PENDING', 'ACTIVE', 'REJECTED')),
+                                   created_at TIMESTAMP NOT NULL DEFAULT now(),
+                                   updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
-CREATE TABLE oportunidade(
-                             id SERIAL PRIMARY KEY ,
-                             instituicao_id INT REFERENCES instituicao(id) NOT NULL,
-                             endereco_id INT REFERENCES endereco(id),
-                             area_atuacao_id INT REFERENCES area_atuacao(id) NOT NULL,
-                             titulo VARCHAR(100) NOT NULL,
-                             descricao TEXT NOT NULL,
-                             data_publicacao TIMESTAMP NOT NULL,
-                             data_validade TIMESTAMP NOT NULL,
-                             remoto BOOLEAN NOT NULL,
-                             carga_horaria INT NOT NULL,
-                             remuneracao NUMERIC(12,2),
-                             beneficios TEXT,
-                             requisitos TEXT
+CREATE TABLE candidate_profile (
+                                   id SERIAL PRIMARY KEY,
+                                   user_id UUID NOT NULL UNIQUE REFERENCES app_user(id),
+                                   full_name VARCHAR(100) NOT NULL,
+                                   phone VARCHAR(15),
+                                   address_id INT REFERENCES address(id),
+                                   birth_date DATE NOT NULL,
+                                   resume_url VARCHAR(255)
 );
 
-
-
-
-
-
-
-
-CREATE TABLE candidato(
-                          id SERIAL PRIMARY KEY ,
-                          nome VARCHAR(100) NOT NULL,
-                          telefone VARCHAR(15),
-                          endereco_id INT REFERENCES endereco(id),
-                          usuario_id UUID REFERENCES usuario(id),
-                          data_nascimento DATE NOT NULL,
-                          curriculo_url VARCHAR(255)
+CREATE TABLE job_area (
+                          id SERIAL PRIMARY KEY,
+                          name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE experiencia_profissional(
-                                         id SERIAL PRIMARY KEY ,
-                                         candidato_id INT REFERENCES candidato(id) NOT NULL,
-                                         cargo VARCHAR(100) NOT NULL,
-                                         empresa VARCHAR(100) NOT NULL,
-                                         data_inicio DATE NOT NULL,
-                                         data_fim DATE
+CREATE TABLE opportunity (
+                             id SERIAL PRIMARY KEY,
+                             recruiter_id INT NOT NULL REFERENCES recruiter_profile(id),
+                             company_id INT NOT NULL REFERENCES company(id),
+                             job_area_id INT NOT NULL REFERENCES job_area(id),
+                             address_id INT REFERENCES address(id),
+                             title VARCHAR(100) NOT NULL,
+                             description TEXT NOT NULL,
+                             published_at TIMESTAMP NOT NULL,
+                             expires_at TIMESTAMP NOT NULL,
+                             is_remote BOOLEAN NOT NULL,
+                             workload_hours INT NOT NULL,
+                             salary NUMERIC(12, 2),
+                             benefits TEXT,
+                             requirements TEXT
 );
 
-CREATE TABLE formacao_academica(
-                                   id SERIAL PRIMARY KEY ,
-                                   candidato_id INT REFERENCES candidato(id) NOT NULL,
-                                   instituicao VARCHAR(100) NOT NULL,
-                                   curso VARCHAR(100) NOT NULL,
-                                   data_inicio DATE NOT NULL,
-                                   data_conclusao DATE
+CREATE TABLE academic_background (
+                                     id SERIAL PRIMARY KEY,
+                                     candidate_id INT NOT NULL REFERENCES candidate_profile(id) ON DELETE CASCADE,
+                                     institution_name VARCHAR(100) NOT NULL,
+                                     course_name VARCHAR(100) NOT NULL,
+                                     start_date DATE NOT NULL,
+                                     end_date DATE
 );
 
-CREATE TABLE habilidade(
-                           id SERIAL PRIMARY KEY ,
-                           nome VARCHAR(100) NOT NULL
+CREATE TABLE professional_experience (
+                                         id SERIAL PRIMARY KEY,
+                                         candidate_id INT NOT NULL REFERENCES candidate_profile(id) ON DELETE CASCADE,
+                                         job_title VARCHAR(100) NOT NULL,
+                                         company_name VARCHAR(100) NOT NULL,
+                                         start_date DATE NOT NULL,
+                                         end_date DATE
 );
 
-CREATE TABLE candidato_habilidade(
-                                     candidato_id INT REFERENCES candidato(id),
-                                     habilidade_id INT REFERENCES habilidade(id),
-                                     PRIMARY KEY (candidato_id, habilidade_id)
+CREATE TABLE skill (
+                       id SERIAL PRIMARY KEY,
+                       name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE inscricao(
-                          id SERIAL PRIMARY KEY ,
-                          candidato_id INT REFERENCES candidato(id) NOT NULL,
-                          oportunidade_id INT REFERENCES oportunidade(id) NOT NULL,
-                          data_inscricao TIMESTAMP NOT NULL,
-                          UNIQUE(candidato_id, oportunidade_id),
-                          status VARCHAR(50) NOT NULL
-)
+CREATE TABLE candidate_skill (
+                                 candidate_id INT NOT NULL REFERENCES candidate_profile(id) ON DELETE CASCADE,
+                                 skill_id INT NOT NULL REFERENCES skill(id) ON DELETE CASCADE,
+                                 PRIMARY KEY (candidate_id, skill_id)
+);
 
+CREATE TABLE application (
+                             id SERIAL PRIMARY KEY,
+                             candidate_id INT NOT NULL REFERENCES candidate_profile(id),
+                             opportunity_id INT NOT NULL REFERENCES opportunity(id),
+                             applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                             status VARCHAR(50) NOT NULL DEFAULT 'APPLIED'
+                                 CHECK (status IN ('APPLIED', 'VIEWED', 'REJECTED', 'INTERVIEW', 'HIRED', 'WITHDRAWN')),
+                             UNIQUE(candidate_id, opportunity_id)
+);

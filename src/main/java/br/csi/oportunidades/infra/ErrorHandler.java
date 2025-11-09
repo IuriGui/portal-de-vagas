@@ -46,21 +46,12 @@ public class ErrorHandler {
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ProblemDetail handleAuthorizationDenied(AuthorizationDeniedException ex) {
-
-        // Cria o ProblemDetail já com o status e a mensagem
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.FORBIDDEN,
                 ex.getMessage()
         );
-
-        // Define o título (resumo do erro)
         problemDetail.setTitle("Acesso Negado");
-
-        // Você pode adicionar propriedades customizadas se precisar
         problemDetail.setProperty("timestamp", Instant.now());
-        // Opcional: um link para a documentação do erro
-        // problemDetail.setType(URI.create("/docs/errors/acesso-negado"));
-
         return problemDetail;
     }
 
@@ -73,14 +64,16 @@ public class ErrorHandler {
 
         String errorMessage = ex.getMostSpecificCause().getMessage();
 
-
         if (errorMessage.contains("inscricao_candidato_id_oportunidade_id_key")) {
 
             body.put("erro", "Você já se inscreveu para esta vaga.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
 
-        } else if(errorMessage.contains("usuario_email_key")) {
+        } else if(errorMessage.contains("app_user_email_key")) {
             body.put("erro", "Este email ja esta cadastrado");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        } else if(errorMessage.contains("application_candidate_id_opportunity_id_key")) {
+            body.put("erro", "O usuário já está inscrito nessa oportunidade");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
         }
 
@@ -89,10 +82,14 @@ public class ErrorHandler {
     }
 
 
-
-
-
-
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("erro", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 
 
 }
