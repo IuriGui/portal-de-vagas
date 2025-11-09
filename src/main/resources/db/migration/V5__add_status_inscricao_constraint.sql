@@ -1,3 +1,0 @@
-ALTER TABLE inscricao
-    ADD CONSTRAINT chk_status_inscricao
-        CHECK (UPPER(status) IN ('INSCRICAO_RECEBIDA', 'EM_TRIAGEM', 'ENTREVISTA_AGENDADA', 'REJEITADO', 'ACEITO'));
